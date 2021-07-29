@@ -1,18 +1,8 @@
 <!doctype html>
 <html lang="en-GB">
 <head>
-  <script type="module">
-    // Take care of cases in which the browser runs this
-    // script before it has finished running 
-    // webcomponents-loader.js (e.g. Firefox script execution order)
-    window.WebComponents = window.WebComponents || { 
-      waitFor(cb){ addEventListener('WebComponentsReady', cb) }
-    }
-
-    WebComponents.waitFor(async () => { 
-      import('../ui-library.js');
-    });
-  </script>
+  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script type="module" src="ui-library.js"></script>
   <meta charset="utf-8">
 
   <style>
