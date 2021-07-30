@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link data-n-head="ssr" rel="icon" type="image/x-icon" href="./img/favicon.ico">
+    <link rel="stylesheet" href="https://fonts.google.com/icons?selected=Material+Icons">
+    <title>VPN - Clickable Prototype</title>
+    <meta name="theme-color" content="#2A3443" />
+  </head>
+
+  <body class="" data-new-gr-c-s-check-loaded="14.1012.0" data-gr-ext-installed="">
+    <section class="headerHySecure mainHeader">
+        <a href="javascript:void(0)">
+            <div class="topLeftBox">
+                <img class="imgLogo" src="./img/Logo.svg" alt="">
+                <p class="title">HySecure</p>
+            </div>
+        </a>
+        <div class="topRightBox" id="header">
+            <!-- SecondLevel Tab Buttons -->
+            <div class="secondaryTab" id="secondaryTabIndex">
+            </div>
+            <div class="listing">
+                <i onclick="toggleDarkMode()" id="themeIcon" class="material-icons-outlined icons">dark_mode</i>
+                <a href="https://docs.accops.com/hysecure_develop/index.html" target="_blank">
+                    <i class="material-icons-outlined icons">help_outline</i>
+
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="mainBlock">
+        <!-- Left coloumn tab -->
+        <div class="primaryTab" id="primaryTab">
+        </div>
+
+        <!-- Right Coloumn tab -->
+        <div class="content" id="RightContentTab">
+
+            <!-- ThirdLevel Tab Buttons -->
+            <div class="tertiaryTab" id="TertiaryTabIndex">
+            </div>
+            <div class="iframeTab">
+                <!-- Iframe Tab -->
+                <iframe id="iframeIndex"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="loader" class="clock"></div>
+
+    <!-- Template 1 primary tab nav items -->
+    <script id="MenuIconTemplate" type="text/template">
+        <button class="navtabImg" data-index="{{index}}" {{active}}>
+            <!-- <img class="icon" src="" alt=""> -->
+            <i class="material-icons-outlined">{{icon}}</i>
+            <p class="icon-name">{{label}}</p>
+        </button>
+    </script>
+
+    <!-- Template 2 for secondary tab nav items -->
+    <script id="RightContentTemplate" type="text/template">
+        <button class="subTab" data-primary-index="{{primaryIndex}}" data-index="{{index}}" {{active}}>
+            <p>{{label}}</p>
+        </button>
+    </script>
+
+    <!-- Template 3 for tertiary tab nav items -->
+    <script id="RightContentSubTabTemplate" type="text/template">
+        <button class="thirdButtonTab" data-primary-index="{{primaryIndex}}" data-secondary-index="{{secondaryIndex}}" data-index="{{index}}" {{active}}>
+            <p>{{label}}</p>
+        </button>
+    </script>
+    <script src="newtree.js?v=7"></script>
+
+    <!--This section is only for integration with current gateway code: START-->
+    <iframe name="IFrametree" style="display: none;"></iframe>
+    <script type="text/javascript">
+        (function () {
+            var tempMenu = top.frames['IFrametree'];
+            var iframeDoc = tempMenu.document;
+            iframeDoc.open();
+            iframeDoc.close();
+            iframeDoc.body.innerHTML = '<a id="lnkConfig"></a>';
+        })();
+    </script>
+    <iframe name="help" style="display: none;"></iframe>
+    <!--This section is only for integration with current gateway code: END-->
+    <script src="./vendor/webcomponents-loader.js"></script>
+    <script>
+      
+function toggleDarkMode() {
+    var iframeDoc = document.getElementById('iframeIndex').contentDocument;
+    document.body.classList.toggle('dark');
+    if (document.body.classList.contains('dark')) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "");
+    }
+
+    if (iframeDoc) {
+        iframeDoc.body.classList.toggle('dark');
+    }
+    var ImageId = document.getElementById('themeIcon');
+    if (ImageId.textContent.match("dark_mode")) {
+        ImageId.textContent = "light_mode";
+    } else {
+        ImageId.textContent = "dark_mode";
+    }
+}
+    </script>    
+  </body>
+</html>
