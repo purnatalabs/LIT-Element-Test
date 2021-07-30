@@ -6,7 +6,7 @@ import './styles.css';
         icon: "bar_chart",
         children: [{
             name: "Dashboard",
-            url: "" // HYSECURE STATUS/Dash Board
+            url: "img/Nav_Images/Dashboard.png" // HYSECURE STATUS/Dash Board
 
         }, {
             name: "Active Users",
