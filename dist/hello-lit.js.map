@@ -1,0 +1,1 @@
+{"version":3,"file":"hello-lit.js","sourceRoot":"","sources":["../hello-lit.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,mBAAmB,CAAC;AAE7C,MAAM,CAAC,cAAc,CAAC,MAAM,CAAC,WAAW,EAAE,QAAQ,CAAC,CAAC","sourcesContent":["import { HelloLit } from './src/HelloLit.js';\r\n\r\nwindow.customElements.define('hello-lit', HelloLit);\r\n"]}

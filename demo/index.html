@@ -1,41 +1,51 @@
-import './styles.css';
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+</head>
+<body>
+  <div id="demo"></div>
 
-(function () {
-    var navtabs = [{
+  <script type="module">
+    import { html, render } from 'lit-html';
+    import '../dist/hello-lit.js';
+
+    const myArray = [{
         name: "Monitor",
         icon: "bar_chart",
         children: [{
             name: "Dashboard",
-            url: "img/Nav_Images/Dashboard.png" // HYSECURE STATUS/Dash Board
+            url: "https://www.google.com" // HYSECURE STATUS/Dash Board
 
         }, {
             name: "Active Users",
             children: [{
                 name: "Active Users",
-                url: "" //  HYSECURE STATUS/Active Users
+                url: "SessionManagement.cgi" //  HYSECURE STATUS/Active Users
             }, {
                 name: "Turbo Users",
-                url: "" //  HYSECURE STATUS/Turbo Active Users
+                url: "turboInterfaceMgmt.cgi?type=17" //  HYSECURE STATUS/Turbo Active Users
             }, {
                 name: "Remote Meeting Users",
-                url: "" //  REMOTE MEETINGS/Live Users
+                url: "progateUser.cgi?type=1" //  REMOTE MEETINGS/Live Users
             }]
         }]
-    }, {
+      }, {
         name: "Users",
         icon: "person",
         children: [{
             name: "Registered Users",
-            url: "profileManager.cgi"
+            url: "https://www.instagram.com"
         }, {
             name: "Local Users",
-            url: "userManager.cgi?type=5" //  AUTH MANAGEMENT/Local Users
+            url: "https://www.facebook.com" //  AUTH MANAGEMENT/Local Users
 
         }, {
             name: "Local Groups",
-            url: "ugManager.cgi?type=3" //  AUTH MANAGEMENT/Local Groups
+            url: "https://www.google.com" //  AUTH MANAGEMENT/Local Groups
         }]
-    }, {
+    },  {
         name: "Apps",
         icon: "widgets",
         children: [{
@@ -54,19 +64,7 @@ import './styles.css';
             url: "loginPolicy.cgi?type=9"
         }]
 
-    } //, {
-        //     name: "Locations",
-        //     icon: "location_on",
-        //     url: " ",
-        //     children: [{
-        //         name: "Locations",
-        //         url: ""
-        //     }, {
-        //         name: "Location Groups",
-        //         url: ""
-        //     }]
-        // }
-        , {
+    }, {
         name: "Policies",
         icon: "settings_ethernet",
         url: " ",
@@ -303,187 +301,13 @@ import './styles.css';
         }]
     }]
 
-    function onPageLoad() {
-        renderPrimaryNav();
-        var firstTabIndex = 0;
-        // var header = document.getElementById('heading');
-        // var navObj = navtabs[firstTabIndex];
-
-        // header.innerText = navObj.name;
-        if (navtabs[firstTabIndex].children) {
-            renderSecondaryNav(firstTabIndex);
-        } else {
-            openUrlInIframe(navObj);
-        }
-        const theme = localStorage.getItem("theme");
-        if (theme == "dark") {
-            document.body.classList.add("dark");
-        }
-    }
-
-    function renderPrimaryNav() {
-        var primaryNav = document.getElementById('primaryTab');
-        var menuItemTemplate = document.getElementById('MenuIconTemplate').innerHTML;
-        var html = '';
-
-        for (var i = 0; i < navtabs.length; i++) {
-            var menuItemHtml = menuItemTemplate;
-            menuItemHtml = menuItemHtml.replace('{{index}}', i);
-            menuItemHtml = menuItemHtml.replace('{{icon}}', navtabs[i].icon);
-            menuItemHtml = menuItemHtml.replace('{{label}}', navtabs[i].name);
-            menuItemHtml = menuItemHtml.replace('{{active}}', i === 0 ? 'data-active' : '');
-
-            html += menuItemHtml;
-        }
-        primaryNav.innerHTML = html;
-    }
-
-    function renderSecondaryNav(tabIndex) {
-        var navObj = navtabs[tabIndex];
-        var secondaryNav = document.getElementById('secondaryTabIndex');
-        var secondaryMenuItemTemplate = document.getElementById("RightContentTemplate").innerHTML;
-        var html = '';
-
-        for (var i = 0; i < navObj.children.length; i++) {
-            var menuItemHtml = secondaryMenuItemTemplate;
-            menuItemHtml = menuItemHtml.replace('{{active}}', i === 0 ? 'data-active' : '');
-            menuItemHtml = menuItemHtml.replace('{{label}}', navObj.children[i].name);
-            menuItemHtml = menuItemHtml.replace('{{primaryIndex}}', tabIndex);
-            menuItemHtml = menuItemHtml.replace('{{index}}', i);
-
-            html += menuItemHtml;
-        }
-
-        secondaryNav.innerHTML = html;
-
-        if (navObj.children[0].children && navObj.children[0].children.length > 0) {
-            renderTertiaryNav(tabIndex, 0);
-        } else {
-            document.body.classList.add('hasSecondary');
-            document.body.classList.remove('hasTertiary');
-            openUrlInIframe(navObj.children[0]);
-        }
-    }
-
-    function renderTertiaryNav(primaryTabIndex, secondaryTabIndex) {
-        var primaryNavObj = navtabs[primaryTabIndex];
-        var secondaryNavObj = primaryNavObj.children[secondaryTabIndex];
-        var tertiaryNav = document.getElementById('TertiaryTabIndex');
-        var tertiaryMenuItemTemplate = document.getElementById("RightContentSubTabTemplate").innerHTML;
-        var html = '';
-
-        for (var i = 0; i < secondaryNavObj.children.length; i++) {
-            var menuItemHtml = tertiaryMenuItemTemplate;
-            menuItemHtml = menuItemHtml.replace('{{active}}', i === 0 ? 'data-active' : '');
-            menuItemHtml = menuItemHtml.replace('{{label}}', secondaryNavObj.children[i].name);
-            menuItemHtml = menuItemHtml.replace('{{primaryIndex}}', primaryTabIndex);
-            menuItemHtml = menuItemHtml.replace('{{secondaryIndex}}', secondaryTabIndex);
-            menuItemHtml = menuItemHtml.replace('{{index}}', i);
-
-            html += menuItemHtml;
-        }
-        tertiaryNav.innerHTML = html;
-
-        document.body.classList.remove('hasSecondary');
-        document.body.classList.add('hasTertiary');
-        openUrlInIframe(secondaryNavObj.children[0]);
-    }
-
-    var _loaderHandle;
-    function openUrlInIframe(navObj) {
-        var iframe = document.getElementById('iframeIndex');
-        iframe.src = typeof navObj.url === typeof function () { } ? navObj.url() : navObj.url;
-        _loaderHandle = setTimeout(function () {
-            var loader = document.getElementById('loader');
-            loader.style.display = 'block';
-            _loaderHandle = undefined;
-        }, 250);
-    }
-
-    var iframe = document.getElementById('iframeIndex');
-    iframe.onload = function () {
-        if (document.body.classList.contains('dark') && (document.body.lastElementChild.contentDocument != "null")) {
-            iframe.contentDocument.body.classList.add('dark');
-        }
-        var loader = document.getElementById('loader');
-        loader.style.display = 'none';
-
-        if (_loaderHandle) {
-            clearTimeout(_loaderHandle);
-        }
-    }
-
-    document.getElementById('primaryTab')
-        .addEventListener('click', function (e) {
-            var target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentElement;
-            if (target.tagName === 'BUTTON') {
-                var index = parseInt(target.getAttribute('data-index'));
-                var navObj = navtabs[index];
-                var current = document.querySelector(".navtabImg[data-active]");
-
-                if (current) current.removeAttribute('data-active');
-                target.setAttribute('data-active', '');
-
-                document.body.classList.remove('hasSecondary');
-                document.body.classList.remove('hasTertiary');
-
-                document.getElementById('secondaryTabIndex').innerHTML = '';
-                document.getElementById('TertiaryTabIndex').innerHTML = '';
-
-                if (navObj && navObj.children.length > 0) {
-                    renderSecondaryNav(index);
-                } else {
-                    document.body.classList.remove('hasSecondary');
-                    document.body.classList.remove('hasTertiary');
-                    openUrlInIframe(navObj);
-                }
-            }
-        });
-
-    document.getElementById('secondaryTabIndex')
-        .addEventListener('click', function (e) {
-            var target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentElement;
-            if (target.tagName === 'BUTTON') {
-                var primaryIndex = parseInt(target.getAttribute('data-primary-index'));
-                var index = parseInt(target.getAttribute('data-index'));
-                var secondaryNavItem = navtabs[primaryIndex].children[index];
-                var secondaryNavChildren = secondaryNavItem.children;
-                var current = document.querySelector(".subTab[data-active]");
-
-                if (current) current.removeAttribute('data-active');
-                target.setAttribute('data-active', '');
-
-                document.getElementById('TertiaryTabIndex').innerHTML = '';
-
-                if (secondaryNavChildren && secondaryNavChildren.length > 0) {
-                    renderTertiaryNav(primaryIndex, index);
-                } else {
-                    document.body.classList.add('hasSecondary');
-                    document.body.classList.remove('hasTertiary');
-                    openUrlInIframe(secondaryNavItem);
-                }
-            }
-        });
-
-    document.getElementById('TertiaryTabIndex')
-        .addEventListener('click', function (e) {
-            var target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentElement;
-            if (target.tagName === 'BUTTON') {
-                var primaryIndex = parseInt(target.getAttribute('data-primary-index'));
-                var secondaryIndex = parseInt(target.getAttribute('data-secondary-index'));
-                var index = parseInt(target.getAttribute('data-index'));
-                var navobj = navtabs[primaryIndex].children[secondaryIndex].children[index];
-                var current = document.querySelector(".thirdButtonTab[data-active]");
-
-                if (current) current.removeAttribute('data-active');
-                target.setAttribute('data-active', '');
-
-                document.body.classList.remove('hasSecondary');
-                document.body.classList.add('hasTertiary');
-
-                openUrlInIframe(navobj);
-            }
-        });
-
-    onPageLoad()
-})();
+    render(
+      html`
+        <hello-lit .myArray=${myArray}>
+        </hello-lit>
+      `,
+      document.querySelector('#demo')
+    );
+  </script>
+</body>
+</html>
