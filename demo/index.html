@@ -160,10 +160,10 @@
         //     name: "NETWORK TRACE",
         //     url: ""
         // },
-        /*{
+        /* {
             name: "Compliance Status",
             url: "LSstatus.cgi?type=1" // HOST MAINTAINANCE/ Liscense Status
-        },*/ {
+        }, */ {
             name: "Power",
             url: "SysConfig.cgi?type=7" // HOST MAINTAINANCE/ Shutdown/Restart
         }
@@ -277,7 +277,7 @@
             },/* {
                 name: "Accops Reporting Server",
                 url: ""
-            },*/ {
+            }, */ {
                 name: "Alert Manager",
                 url: "AlertManager.cgi?type=1" //  REPORTS AND ALERTS/Alret Manager
             }]
@@ -289,11 +289,11 @@
                 url: "HAsettings.cgi?type=1"
             }, {
                 name: "Configure",
-                url: function () {
-                    var tempMenu = top.frames['IFrametree'];
-                    var lnkConfig = tempMenu.document.getElementById('lnkConfig');
-                    return lnkConfig ? lnkConfig.getAttribute('href') || 'SetInstallation.cgi?type=1' : '#';
-                } // Configuration linkto fill
+                url () {
+                const tempMenu = top.frames.IFrametree;
+                const lnkConfig = tempMenu.document.getElementById('lnkConfig');
+                return lnkConfig ? lnkConfig.getAttribute('href') || 'SetInstallation.cgi?type=1' : '#';
+            } // Configuration linkto fill
             }]
         }, {
             name: "Theme",

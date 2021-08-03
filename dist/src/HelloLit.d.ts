@@ -1,15 +1,13 @@
 import { LitElement } from 'lit-element';
 
 export declare class HelloLit extends LitElement {
-  static styles: import('lit-element').CSSResult;
+    title: string;
 
-  title: string;
+    appLogo: string;
 
-  personName: string;
+    help_link: string;
 
-  counter: number;
+    label: string;
 
-  __increment(): void;
-
-  render(): import('lit-element').TemplateResult;
+    myArray: string[];
 }

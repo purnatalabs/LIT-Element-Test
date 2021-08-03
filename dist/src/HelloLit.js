@@ -2,12 +2,12 @@ import { __decorate } from "tslib";
 import { html, css, LitElement, property } from 'lit-element';
 
 export class HelloLit extends LitElement {
-    
+
     static get properties() {
         return {
-              myArray: { type: Array }
-            };
-        }
+            myArray: { type: Array }
+        };
+    }
 
     constructor() {
         super(...arguments);
@@ -17,53 +17,23 @@ export class HelloLit extends LitElement {
         this.label = 'data';
         this.myArray = [''];
     }
-    renderPrimaryNav() {
-        this.shadowRoot.getElementById('primaryTab')
-        .addEventListener('click', function (e) {
-            var target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentElement;
-            if (target.tagName === 'BUTTON') {
-                var index = parseInt(target.getAttribute('data-index'));
-                var primarymenu = this.myArray[index];
-                var current = document.querySelector(".navtabImg[data-active]");
-
-                if (current) current.removeAttribute('data-active');
-                target.setAttribute('data-active', '');
-
-                this.shadowRoot.classList.remove('hasSecondary');
-                this.shadowRoot.classList.remove('hasTertiary');
-
-                this.shadowRoot.getElementById('secondaryTabIndex').innerHTML = '';
-                this.shadowRoot.getElementById('TertiaryTabIndex').innerHTML = '';
-
-                if (primarymenu && primarymenu.children.length > 0) {
-                    SecondaryNav(index);
-                } else {
-                    this.shadowRoot.classList.remove('hasSecondary');
-                    this.shadowRoot.classList.remove('hasTertiary');
-                }
-            }
-        });
-    }
     get PrimaryNav() {
-    
+
         return html`
-        
         ${this.myArray.map((primarymenu, index) => html`
-        <button class="navtabImg" ${active}  data-index=${index}  @click=${this.renderPrimaryNav}>
+            <button class="navtabImg" data-index=${index} ${this.active}>
                 <i class="material-icons-outlined">${primarymenu.icon}</i>
                 <p class="icon-name">${primarymenu.name}</p>
             </button>   
         `)}
       `;
     }
-    
-    SecondaryNav() {
+    SecondaryNav(index) {
         return html`
-
         ${this.myArray.map((primarymenu, index) => html` 
         
             ${primarymenu.children.map((secondarymenu) => html`
-                <button class="subTab" ${active} data-primary-index=${this.primaryIndex} data-index=${index} >
+                <button class="subTab" data-index="${index}">
                     <p>${secondarymenu.name}</p>
                 </button>
             `)}
@@ -71,71 +41,99 @@ export class HelloLit extends LitElement {
         `;
     }
 
-    openUrlInIframe() {
-        var iframe = this.shadowRoot.getElementById('iframeIndex').innerHTML;
-        iframe.src = this.myArray[0].children[0].url;
-    }
+    
+        renderPrimary(e) {
+            const myArray= this.myArray;
+            this.renderRoot.getElementById('primaryTab');
+            var target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentElement;
+            if (target.tagName === 'BUTTON') {
+                var index = parseInt(target.getAttribute('data-index'));
+                var navObj = myArray[index];
+                var current = document.querySelector(".navtabImg[data-active]");
 
-    toggleDarkMode(){
-        var iframeDoc = this.shadowRoot.getElementById('iframeIndex').contentDocument;
-        if (this.shadowRoot.classList.contains('dark')) {
+                if (current) current.removeAttribute('data-active');
+                target.setAttribute('data-active', '');
+
+                document.body.classList.remove('hasSecondary');
+                document.body.classList.remove('hasTertiary');
+
+                document.getElementById('secondaryTabIndex').innerHTML = '';
+                document.getElementById('TertiaryTabIndex').innerHTML = '';
+
+                if (navObj && navObj.children.length > 0) {
+                    SecondaryNav(index);
+                }
+            }
+        }
+    
+    toggleDarkMode() {
+        this.renderRoot.firstElementChild.classList.toggle('dark');
+        if (this.renderRoot.firstElementChild.classList.contains('dark')) {
             localStorage.setItem("theme", "dark");
         } else {
             localStorage.setItem("theme", "");
         }
+        var iframeDoc = this.shadowRoot.getElementById('iframeIndex').contentDocument;
         if (iframeDoc) {
             iframeDoc.body.classList.toggle('dark');
         }
-        const ImageId= this.shadowRoot.getElementById('themeIcon');
-        if (ImageId.textContent.match("dark_mode")){
+        const ImageId = this.shadowRoot.getElementById('themeIcon');
+        if (ImageId.textContent.match("dark_mode")) {
             ImageId.textContent = "light_mode";
         } else {
             ImageId.textContent = "dark_mode";
         }
     }
-    
+
     render() {
-        return html `        
-        <section class="headerHySecure mainHeader">
-            <a href="javascript:void(0)">
-            <div class="topLeftBox">
-            
-                <img class="imgLogo" src=${this.appLogo} alt="">
-                <p class="title">${this.title}</p>
-            </div>
-            </a>
-            <div class="topRightBox" id="header">
-                <!-- SecondLevel Tab Buttons -->
-                <div class="secondaryTab" id="secondaryTabIndex" @click=${this.openUrlInIframe}>
+        return html`   
+        <section class="">     
+            <div class="headerHySecure mainHeader">
+                <a href="javascript:void(0)">
+                <div class="topLeftBox">
+                
+                    <img class="imgLogo" src=${this.appLogo} alt="">
+                    <p class="title">${this.title}</p>
                 </div>
-                <div class="listing">
-                    <i @click=${this.toggleDarkMode} id="themeIcon" class="material-icons-outlined icons">dark_mode</i>
-                    <a href=${this.help_link} target="_blank">
-                        <i class="material-icons-outlined icons">help_outline</i>
-                    </a>
+                </a>
+                <div class="topRightBox" id="header">
+                    <!-- SecondLevel Tab Buttons -->
+                    <div class="secondaryTab" id="secondaryTabIndex">
+                    
+                    </div>
+                    <div class="listing">
+                        <i @click=${this.toggleDarkMode} id="themeIcon" class="material-icons-outlined icons">dark_mode</i>
+                        <a href=${this.help_link} target="_blank">
+                            <i class="material-icons-outlined icons">help</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="mainBlock">
+                <div class="primaryTab" id="primaryTab" ${this.connectedCallback}>
+                ${this.PrimaryNav}
+                </div>
+                <div class="content" id="RightContentTab">
+                    <div class="tertiaryTab" id="TertiaryTabIndex">
+                    </div>
+                    <div class="iframeTab">
+                        <iframe id="iframeIndex"></iframe>
+                    </div>
                 </div>
             </div>
         </section>
-
-        
-        <div class="mainBlock">
-            <div class="primaryTab" id="primaryTab">
-            ${this.PrimaryNav}
-            </div>
-            <div class="content" id="RightContentTab">
-
-                <div class="tertiaryTab" id="TertiaryTabIndex">
-                </div>
-                <div class="iframeTab">
-                    <iframe id="iframeIndex"></iframe>
-                </div>
-            </div>
-        </div>
       `;
     }
-    // html`<li>${item}</li>`)}
+    connectedCallback() {
+    
+        this.renderRoot.getElementById('primaryTab')
+            .addEventListener('@click=${renderPrimary(e)}');
+    }
+
 }
-HelloLit.styles = css `
+HelloLit.styles = css`
+    
     body {
         margin: 0;
         height: 100%;
@@ -149,6 +147,48 @@ HelloLit.styles = css `
         font-style: normal;
         font-weight: 600;
     }
+
+    .dark {
+        background: #2c2c2c;
+    }
+    
+    .dark .topLeftBox {
+        background: #353535;
+        border-right: 1px solid #5D5350;
+    }
+
+    .dark .primaryTab {
+        background: #353535;
+        border-right: 1px solid #353535;
+    }
+    
+    .dark .navtabImg, .dark .drkThirdlvlBtn button {
+        color: #bab5b4;
+    }
+
+    .dark .navtabImg:hover, .dark .subTab:hover, .dark .thirdButtonTab {
+        color: #ffffff;
+    }
+
+    .dark .secondaryTab {
+        overflow: auto;
+    }
+    
+    .dark .tertiaryTab {
+        width: 100%;
+    }
+
+    .dark .tertiaryTab .thirdButtonTab:hover {
+        color: #F69C83;
+        background: #353535;
+    }
+
+    .dark .thirdButtonTab[data-active] {
+        box-sizing: border-box;
+        color: #F69C83 !important;
+        background: #2C2C2C !important;
+    }
+
     .headerHySecure {
         height: 48px;
         justify-content: space-between;
@@ -245,7 +285,6 @@ HelloLit.styles = css `
         white-space: nowrap;
         display: inline-block;
     }
-
     .subTab {
         color: #FBCDC1;
         overflow: hidden;
@@ -307,7 +346,6 @@ HelloLit.styles = css `
         box-sizing: border-box;
         color: #F37B59 !important;
     }
-
     @media (min-width: 768px) {
         .topRightBox {
             margin-left: 72px;
@@ -374,11 +412,9 @@ HelloLit.styles = css `
         width: 100%;
         height: calc(100vh - 124px);
     }
-
     .hasSecondary iframe {
         height: calc(100vh - 60px) !important;
     }
-
     .hasTertiary iframe {
         height: calc(100vh - 92px) !important;
     }
