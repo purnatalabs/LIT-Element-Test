@@ -18,38 +18,76 @@ export class HelloLit extends LitElement {
         this.myArray = [''];
     }
     get PrimaryNav() {
-
-        return html`
-        ${this.myArray.map((primarymenu, index) => html`
-            <button class="navtabImg" data-index=${index} ${this.active}>
-                <i class="material-icons-outlined">${primarymenu.icon}</i>
-                <p class="icon-name">${primarymenu.name}</p>
+        return  html`
+            <button class="navtabImg" data-index={{index}} {{active}}>
+                <i class="material-icons-outlined">{{icon}}</i>
+                <p class="icon-name">{{label}}</p>
             </button>   
-        `)}
-      `;
-    }
-    SecondaryNav(index) {
+    `}
+
+    get SecondaryNav(){
         return html`
-        ${this.myArray.map((primarymenu, index) => html` 
-        
-            ${primarymenu.children.map((secondarymenu) => html`
-                <button class="subTab" data-index="${index}">
-                    <p>${secondarymenu.name}</p>
-                </button>
-            `)}
-        `)}
-        `;
+            <button class="subTab" data-primary-index="{{primaryIndex}}" data-index="{{index}}" {{active}}>
+                <p>{{label}}</p>
+            </button>
+    `}
+
+    get TertiaryNav() {
+        return html`
+            <button class="thirdButtonTab" data-primary-index="{{primaryIndex}}" data-secondary-index="{{secondaryIndex}}" data-index="{{index}}" {{active}}>
+                <p>{{label}}</p>
+            </button>
+    `}
+
+    // get SecondaryNav() {
+    //     return  html`
+    //     <button class="navtabImg" data-index={{index}} {{active}}>
+    //         <i class="material-icons-outlined">{{icon}}</i>
+    //         <p class="icon-name">{{label}}</p>
+    //     </button>   
+    // `}
+  
+    onPageLoad() {
+        this.renderPrimaryNav();
+        var firstTabIndex = 0;
+        // var header = document.getElementById('heading');
+        // var navObj = navtabs[firstTabIndex];
+        const myArray = this.myArray;
+        // header.innerText = navObj.name;
+        // if (myArray[firstTabIndex].children) {
+        //     renderSecondaryNav(firstTabIndex);
+        // } else {
+        //     openUrlInIframe(navObj);
+        // }
+        const theme = localStorage.getItem("theme");
+        if (theme == "dark") {
+            document.body.classList.add("dark");
+        }
     }
 
+    renderPrimaryNav() {
+        const myArray = this.myArray;
+        let primaryNav =  this.renderRoot.getElementById('primaryTab');
+        let menuItemTemplate =  this.PrimaryNav;
+        let html = '';
+        for (var i = 0; i < myArray.length; i++) {
+            var menuItemHtml = menuItemTemplate;
+            menuItemHtml = menuItemHtml.strings[0].replace('{{index}}', i);
+            menuItemHtml = menuItemHtml.replace('{{icon}}', myArray[i].icon);
+            menuItemHtml = menuItemHtml.replace('{{label}}', myArray[i].name);
+            menuItemHtml = menuItemHtml.replace('{{active}}', i === 0 ? 'data-active' : '');
+
+            html += menuItemHtml;
+        }
+        primaryNav.innerHTML = html;
     
-        renderPrimary(e) {
-            const myArray= this.myArray;
-            this.renderRoot.getElementById('primaryTab');
+        this.renderRoot.getElementById('primaryTab')
+        .addEventListener('click', function (e) {
             var target = e.target.tagName === 'BUTTON' ? e.target : e.target.parentElement;
             if (target.tagName === 'BUTTON') {
                 var index = parseInt(target.getAttribute('data-index'));
                 var navObj = myArray[index];
-                var current = document.querySelector(".navtabImg[data-active]");
+                var current = this.querySelector(".navtabImg[data-active]");
 
                 if (current) current.removeAttribute('data-active');
                 target.setAttribute('data-active', '');
@@ -57,15 +95,49 @@ export class HelloLit extends LitElement {
                 document.body.classList.remove('hasSecondary');
                 document.body.classList.remove('hasTertiary');
 
-                document.getElementById('secondaryTabIndex').innerHTML = '';
-                document.getElementById('TertiaryTabIndex').innerHTML = '';
+                // var secondaryTab = this.renderRoot.getElementById('secondaryTabIndex').innerHTML;
+                // secondaryTab = '';
+                // var tertiaryTab = this.renderRoot.getElementById('TertiaryTabIndex').innerHTML;
+                // tertiaryTab =  '';
 
                 if (navObj && navObj.children.length > 0) {
-                    SecondaryNav(index);
+                    this.renderSecondaryNav(index);
+                } else {
+                    document.body.classList.remove('hasSecondary');
+                    document.body.classList.remove('hasTertiary');
+                    openUrlInIframe(navObj);
                 }
             }
-        }
-    
+        });   
+    }   
+
+renderSecondaryNav(tabIndex) {
+    var myArray = this.myArray;
+    var navObj = myArray[tabIndex];
+    var secondaryNav = this.renderRoot.getElementById('secondaryTabIndex');
+    var secondaryMenuItemTemplate = this.SecondaryNav;
+    var html = '';
+
+    for (var i = 0; i < navObj.children.length; i++) {
+        var menuItemHtml = secondaryMenuItemTemplate;
+        menuItemHtml = menuItemHtml.replace('{{active}}', i === 0 ? 'data-active' : '');
+        menuItemHtml = menuItemHtml.replace('{{label}}', navObj.children[i].name);
+        menuItemHtml = menuItemHtml.replace('{{primaryIndex}}', tabIndex);
+        menuItemHtml = menuItemHtml.replace('{{index}}', i);
+
+        html += menuItemHtml;
+    }
+
+    secondaryNav.innerHTML = html;
+
+    if (navObj.children[0].children && navObj.children[0].children.length > 0) {
+        renderTertiaryNav(tabIndex, 0);
+    } else {
+        document.body.classList.add('hasSecondary');
+        document.body.classList.remove('hasTertiary');
+        openUrlInIframe(navObj.children[0]);
+    }
+}
     toggleDarkMode() {
         this.renderRoot.firstElementChild.classList.toggle('dark');
         if (this.renderRoot.firstElementChild.classList.contains('dark')) {
@@ -87,7 +159,7 @@ export class HelloLit extends LitElement {
 
     render() {
         return html`   
-        <section class="">     
+        <section class="" @click=${this.onPageLoad}>     
             <div class="headerHySecure mainHeader">
                 <a href="javascript:void(0)">
                 <div class="topLeftBox">
@@ -111,25 +183,22 @@ export class HelloLit extends LitElement {
             </div>
         
             <div class="mainBlock">
-                <div class="primaryTab" id="primaryTab" ${this.connectedCallback}>
-                ${this.PrimaryNav}
+            <div class="primaryTab" id="primaryTab">
+            </div>
+    
+            <div class="content" id="RightContentTab">
+    
+                <div class="tertiaryTab" id="TertiaryTabIndex">
                 </div>
-                <div class="content" id="RightContentTab">
-                    <div class="tertiaryTab" id="TertiaryTabIndex">
-                    </div>
-                    <div class="iframeTab">
-                        <iframe id="iframeIndex"></iframe>
-                    </div>
+                <div class="iframeTab">
+                    <iframe id="iframeIndex"></iframe>
                 </div>
             </div>
+        </div>
         </section>
       `;
     }
-    connectedCallback() {
-    
-        this.renderRoot.getElementById('primaryTab')
-            .addEventListener('@click=${renderPrimary(e)}');
-    }
+   
 
 }
 HelloLit.styles = css`
@@ -405,6 +474,21 @@ HelloLit.styles = css`
             justify-content: space-around;
             align-items: center;
         }
+    }
+
+    .secondaryTab,
+    .hasSecondary .tertiaryTab,
+    .tertiaryTab {
+        display: none;
+    }
+
+    .hasSecondary .secondaryTab,
+    .hasTertiary .secondaryTab {
+        display: block;
+    }
+
+    .hasTertiary .tertiaryTab {
+        display: inline-flex;
     }
 
     iframe {
